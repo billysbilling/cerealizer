@@ -9,9 +9,9 @@ module.exports = (array, options) ->
 
 	# Proces data in steps
 	array = _mergeElements(array, options)
-	array = _mergeNamespaces(array, options)
+	array = _mergeNamespaces(array)
 	array = _buildRelationships(array, options)
-	array = _convertToArrays(array, options)
+	array = _convertToArrays(array)
 
 	return array
 
@@ -20,19 +20,23 @@ module.exports = (array, options) ->
 # elements.
 #
 # elements - The Array containing object hashes
-# options  - The Hash containing options
+# options:
+#   identifier       - The String or Array identifier
+#   _collectionNames - The Array of collection names
 #
 # Returns collections for each table of item objects
 _mergeElements = (elements, options) ->
+	{_collectionNames, identifier} = options
+
 	_.reduce elements, (object, element) ->
 		for collection, fields of element
 			# Create array of all collection names
-			if options._collectionNames.indexOf(collection) is -1
-				options._collectionNames.push(collection)
+			if _collectionNames.indexOf(collection) is -1
+				_collectionNames.push(collection)
 
 			# Safely add unique objects to collection
 			object[collection] ?= {}
-			object[collection][_buildId(fields, options.identifier)] = fields
+			object[collection][_buildId(fields, identifier)] = fields
 
 		return object
 	, {}
@@ -40,10 +44,9 @@ _mergeElements = (elements, options) ->
 # Merges namespaced collections into the namespace's collection.
 #
 # elements - The Object containing table collections
-# options  - The Hash containing options
 #
 # Returns collections for each namespace of objects
-_mergeNamespaces = (elements, options) ->
+_mergeNamespaces = (elements) ->
 	_.reduce elements, (object, items, collectionName) ->
 		# Search collection name for {collectionName} or {namespace}:{collectionName}
 		parts = collectionName.match(/^([^:]+)(:([^:]+))*/)
@@ -64,10 +67,14 @@ _mergeNamespaces = (elements, options) ->
 # many relationships.
 #
 # elements - The Object containing namespace collections
-# options  - The Hash containing options
+# options:
+#   identifier       - The String or Array identifier
+#   _collectionNames - The Array of collection names
 #
 # Returns collections for each namespace of objects
 _buildRelationships = (elements, options) ->
+	{_collectionNames, identifier} = options
+
 	_.reduce elements, (object, items, collectionName) ->
 		# Add to existing collection or create it
 		if object[collectionName]?
@@ -79,17 +86,17 @@ _buildRelationships = (elements, options) ->
 		for id, item of items
 
 			# Run through each collection name
-			for refCollectionName in options._collectionNames
-				itemIdentifier = _buildReferenceIdentifier(refCollectionName, item, options.identifier)
+			for refCollectionName in _collectionNames
+				itemIdentifier = _buildReferenceIdentifier(refCollectionName, item, identifier)
 				if not itemIdentifier?
 					continue
 				if itemIdentifier is 'id'
-					collectionIdentifier = _buildRelationshipIdentifier(collectionName, options.identifier, true)
+					collectionIdentifier = _buildRelationshipIdentifier(collectionName, identifier, true)
 				else
 					collectionIdentifier = inflection.pluralize itemIdentifier
 
 				# Check for reference to collection
-				if (refId = item[_buildRelationshipIdentifier(refCollectionName, options.identifier)])?
+				if (refId = item[_buildRelationshipIdentifier(refCollectionName, identifier)])?
 
 					# Check original collections object for existance of collection and item
 					if elements[refCollectionName]? and elements[refCollectionName][refId]?
@@ -107,10 +114,9 @@ _buildRelationships = (elements, options) ->
 # Converts first level of nested objects to arrays.
 #
 # elements - The Hash containing hashes of records
-# options  - The Hash containing options
 #
 # Returns object with nested arrays
-_convertToArrays = (elements, options) ->
+_convertToArrays = (elements) ->
 	_.reduce elements, (object, items, col) ->
 		# Convert collection to array
 		object[col] = _.toArray(items)
@@ -124,7 +130,7 @@ _convertToArrays = (elements, options) ->
 # passed as argument.
 #
 # collectionName - The String of the collection's name
-# identifier - The String or Array containing identifier of one or more keys
+# identifier - The String or Array identifier
 #
 # Returns String of identifier value or undefined if none is found
 _buildReferenceIdentifier = (collectionName, fields, identifier) ->
@@ -149,7 +155,7 @@ _buildReferenceIdentifier = (collectionName, fields, identifier) ->
 # an array, keys are combined by dashes.
 #
 # fields     - The Hash containing fields
-# identifier - The String or Array containing identifier of one or more keys
+# identifier - The String or Array identifier
 #
 # Returns String of ID
 _buildId = (fields, identifier, strict = false) ->
@@ -177,7 +183,7 @@ _buildId = (fields, identifier, strict = false) ->
 # dashes.
 #
 # collectionName - The String of the relationship collection's name
-# identifier     - The String or Array containing identifier of one or more keys
+# identifier     - The String or Array identifier
 #
 # Returns String of relationship identifier
 _buildRelationshipIdentifier = (collectionName, identifier, plural = false) ->
