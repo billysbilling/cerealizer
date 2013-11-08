@@ -120,9 +120,9 @@ _buildRelationships = (elements, options) ->
 #
 # Returns object with nested arrays
 _convertToArrays = (elements) ->
-	_.reduce elements, (object, items, col) ->
+	_.reduce elements, (object, items, collectionName) ->
 		# Convert collection to array
-		object[col] = _.toArray(items)
+		object[collectionName] = _.toArray(items)
 
 		return object
 	, {}
