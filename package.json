@@ -1,0 +1,20 @@
+{
+  "name": "serializer",
+  "version": "0.0.1",
+  "description": "Serialize data",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --reporter spec --recursive --compilers coffee:coffee-script ./tests"
+  },
+  "author": "Michael Storgaard",
+  "license": "none",
+  "dependencies": {
+    "coffee-script": "~1.6.3",
+    "inflection": "~1.2.6",
+    "lodash": "~2.2.1",
+    "moment": "~2.4.0"
+  },
+  "devDependencies": {
+    "mocha": "~1.10.0"
+  }
+}
