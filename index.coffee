@@ -1,5 +1,8 @@
 inflection = require 'inflection'
 _ = require 'lodash'
+buildId = require './lib/build-id'
+buildReferenceIdentifier = require './lib/build-reference-identifier'
+buildRelationshipIdentifier = require './lib/build-relationship-identifier'
 
 module.exports = (array, options) ->
 	# Set default options
@@ -36,7 +39,7 @@ _mergeElements = (elements, options) ->
 
 			# Safely add unique objects to collection
 			object[collection] ?= {}
-			object[collection][_buildId(fields, identifier)] = fields
+			object[collection][buildId(fields, identifier)] = fields
 
 		return object
 	, {}
@@ -87,20 +90,20 @@ _buildRelationships = (elements, options) ->
 			# Run through each collection name
 			for refCollectionName in _collectionNames
 				# Build item identifier based on item keys
-				itemIdentifier = _buildReferenceIdentifier(refCollectionName, item, identifier)
+				itemIdentifier = buildReferenceIdentifier(refCollectionName, item, identifier)
 
 				# If no item identifier is found, don't continue with relationships for this
 				if itemIdentifier?
 					# Build collection identifier
 					if itemIdentifier is 'id'
 						# If using generic ID item identifier, build collection identifier from collection name
-						collectionIdentifier = _buildRelationshipIdentifier(collectionName, identifier, true)
+						collectionIdentifier = buildRelationshipIdentifier(collectionName, identifier, true)
 					else
 						# Otherwise just use pluralized version of item identifier
 						collectionIdentifier = inflection.pluralize(itemIdentifier)
 
 					# Check for reference to collection
-					if (refId = item[_buildRelationshipIdentifier(refCollectionName, identifier)])?
+					if (refId = item[buildRelationshipIdentifier(refCollectionName, identifier)])?
 						# Check original collections object for existance of collection and item
 						if elements[refCollectionName]? and elements[refCollectionName][refId]?
 							# Safely add unique reference to this object from collection object
@@ -126,82 +129,3 @@ _convertToArrays = (elements) ->
 
 		return object
 	, {}
-
-# Helper: Build relationship identifier from name of the collection and
-# identifier array or string. If identifier is an array, key are combined by
-# dashes. This method verifies the existance of the identifier among the fields
-# passed as argument.
-#
-# collectionName - The String of the collection's name
-# identifier - The String or Array identifier
-#
-# Returns String of identifier value or undefined if none is found
-_buildReferenceIdentifier = (collectionName, fields, identifier) ->
-	id = _buildId(fields, identifier, true)
-	if id?
-		if Array.isArray(identifier)
-			return identifier.join('-')
-
-		return identifier
-
-	refIdentifier = _buildRelationshipIdentifier(collectionName, identifier)
-	keys = Object.keys(fields)
-	keys = _.filter keys, (key) ->
-		return key isnt refIdentifier
-
-	if keys.length is 1
-		return keys[0]
-
-	return undefined
-
-# Helper: Build ID from fields and identifier array or string. If identifier is
-# an array, keys are combined by dashes.
-#
-# fields     - The Hash containing fields
-# identifier - The String or Array identifier
-#
-# Returns String of ID
-_buildId = (fields, identifier, strict = false) ->
-	# Check for identifier array
-	if Array.isArray(identifier)
-		# Create array of identifier values
-		values = []
-		for key in identifier
-			values.push(fields[key])
-
-		# Return indentifier values combined by dashes
-		return values.join('-')
-
-	id = fields[identifier]
-
-	# Check for identifier, else if not strict create ID of all fields
-	if not id? and not strict
-		id = _.values(fields).join('-')
-
-	# Return identifier value
-	return id
-
-# Helper: Build identifier for relationship from name of the collection and
-# identifier array or string. If identifier is an array, key are combined by
-# dashes.
-#
-# collectionName - The String of the relationship collection's name
-# identifier     - The String or Array identifier
-#
-# Returns String of relationship identifier
-_buildRelationshipIdentifier = (collectionName, identifier, plural = false) ->
-	# Inflect model name from collection name
-	relationshipIdentifier = inflection.singularize(collectionName)
-
-	# Generate pascalcased identifier
-	if Array.isArray(identifier)
-		relationshipIdentifier += identifier.map((key) ->
-			return inflection.capitalize(key)
-		).join('')
-	else
-		relationshipIdentifier += inflection.capitalize(identifier)
-
-	if plural
-		relationshipIdentifier += 's'
-
-	return relationshipIdentifier
