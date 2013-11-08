@@ -4,6 +4,17 @@ buildId = require './lib/build-id'
 buildReferenceIdentifier = require './lib/build-reference-identifier'
 buildRelationshipIdentifier = require './lib/build-relationship-identifier'
 
+# Serialize nested collection arrays into collections of arrays. An obivous
+# usecase is a MySQL rows array, when nestTables is true, which would return an
+# object containing arrays for each table name containing their rows without
+# duplicates.
+#
+# array   - The Array of objects containing nested collections
+# options:
+#   identifier       - The String or Array identifier
+#   _collectionNames - The Array of collection names
+#
+# Returns object with nested arrays
 module.exports = (array, options) ->
 	# Set default options
 	options ?= {}
