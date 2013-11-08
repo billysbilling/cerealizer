@@ -5,6 +5,7 @@ module.exports = (array, options) ->
 	# Set default options
 	options ?= {}
 	options.identifier ?= 'id'
+	options._collectionNames = []
 
 	# Proces data in steps
 	array = _mergeElements(array, options)
@@ -13,8 +14,6 @@ module.exports = (array, options) ->
 	array = _convertToArrays(array, options)
 
 	return array
-
-collectionNames = []
 
 # Merges elements into collections (tables) containing record item objects
 # instead of arrays (rows) containing hashes (tables). Also removes duplicate
@@ -28,8 +27,8 @@ _mergeElements = (elements, options) ->
 	_.reduce elements, (object, element) ->
 		for collection, fields of element
 			# Create array of all collection names
-			if collectionNames.indexOf(collection) is -1
-				collectionNames.push(collection)
+			if options._collectionNames.indexOf(collection) is -1
+				options._collectionNames.push(collection)
 
 			# Safely add unique objects to collection
 			object[collection] ?= {}
@@ -80,7 +79,7 @@ _buildRelationships = (elements, options) ->
 		for id, item of items
 
 			# Run through each collection name
-			for refCollectionName in collectionNames
+			for refCollectionName in options._collectionNames
 				itemIdentifier = _buildReferenceIdentifier(refCollectionName, item, options.identifier)
 				if not itemIdentifier?
 					continue
