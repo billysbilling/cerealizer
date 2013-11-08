@@ -51,7 +51,7 @@ _mergeNamespaces = (elements) ->
 		# Search collection name for {collectionName} or {namespace}:{collectionName}
 		parts = collectionName.match(/^([^:]+)(:([^:]+))*/)
 		# Update collection name to namespace
-		if parts[3]
+		if parts[3]?
 			collectionName = parts[1]
 
 		# Add to existing collection or create it
@@ -84,29 +84,32 @@ _buildRelationships = (elements, options) ->
 
 		# Run through all items in the collection
 		for id, item of items
-
 			# Run through each collection name
 			for refCollectionName in _collectionNames
+				# Build item identifier based on item keys
 				itemIdentifier = _buildReferenceIdentifier(refCollectionName, item, identifier)
-				if not itemIdentifier?
-					continue
-				if itemIdentifier is 'id'
-					collectionIdentifier = _buildRelationshipIdentifier(collectionName, identifier, true)
-				else
-					collectionIdentifier = inflection.pluralize itemIdentifier
 
-				# Check for reference to collection
-				if (refId = item[_buildRelationshipIdentifier(refCollectionName, identifier)])?
+				# If no item identifier is found, don't continue with relationships for this
+				if itemIdentifier?
+					# Build collection identifier
+					if itemIdentifier is 'id'
+						# If using generic ID item identifier, build collection identifier from collection name
+						collectionIdentifier = _buildRelationshipIdentifier(collectionName, identifier, true)
+					else
+						# Otherwise just use pluralized version of item identifier
+						collectionIdentifier = inflection.pluralize itemIdentifier
 
-					# Check original collections object for existance of collection and item
-					if elements[refCollectionName]? and elements[refCollectionName][refId]?
+					# Check for reference to collection
+					if (refId = item[_buildRelationshipIdentifier(refCollectionName, identifier)])?
+						# Check original collections object for existance of collection and item
+						if elements[refCollectionName]? and elements[refCollectionName][refId]?
+							# Safely add unique reference to this object from collection object
+							object[refCollectionName] ?= {}
+							object[refCollectionName][refId] ?= {}
+							refCol = object[refCollectionName][refId][collectionIdentifier] ?= []
 
-						# Safely add unique reference to this object from collection object
-						object[refCollectionName] ?= {}
-						object[refCollectionName][refId] ?= {}
-						refCol = object[refCollectionName][refId][collectionIdentifier] ?= []
-						if refCol.indexOf(item[itemIdentifier]) is -1
-							refCol.push(item[itemIdentifier])
+							if refCol.indexOf(item[itemIdentifier]) is -1
+								refCol.push(item[itemIdentifier])
 
 		return object
 	, {}
