@@ -97,7 +97,7 @@ _buildRelationships = (elements, options) ->
 						collectionIdentifier = _buildRelationshipIdentifier(collectionName, identifier, true)
 					else
 						# Otherwise just use pluralized version of item identifier
-						collectionIdentifier = inflection.pluralize itemIdentifier
+						collectionIdentifier = inflection.pluralize(itemIdentifier)
 
 					# Check for reference to collection
 					if (refId = item[_buildRelationshipIdentifier(refCollectionName, identifier)])?
@@ -140,12 +140,12 @@ _buildReferenceIdentifier = (collectionName, fields, identifier) ->
 	id = _buildId(fields, identifier, true)
 	if id?
 		if Array.isArray(identifier)
-			return identifier.join '-'
+			return identifier.join('-')
 
 		return identifier
 
 	refIdentifier = _buildRelationshipIdentifier(collectionName, identifier)
-	keys = Object.keys fields
+	keys = Object.keys(fields)
 	keys = _.filter keys, (key) ->
 		return key isnt refIdentifier
 
@@ -167,16 +167,16 @@ _buildId = (fields, identifier, strict = false) ->
 		# Create array of identifier values
 		values = []
 		for key in identifier
-			values.push fields[key]
+			values.push(fields[key])
 
 		# Return indentifier values combined by dashes
-		return values.join '-'
+		return values.join('-')
 
 	id = fields[identifier]
 
 	# Check for identifier, else if not strict create ID of all fields
 	if not id? and not strict
-		id = _.values(fields).join '-'
+		id = _.values(fields).join('-')
 
 	# Return identifier value
 	return id
@@ -191,15 +191,15 @@ _buildId = (fields, identifier, strict = false) ->
 # Returns String of relationship identifier
 _buildRelationshipIdentifier = (collectionName, identifier, plural = false) ->
 	# Inflect model name from collection name
-	relationshipIdentifier = inflection.singularize collectionName
+	relationshipIdentifier = inflection.singularize(collectionName)
 
 	# Generate pascalcased identifier
 	if Array.isArray(identifier)
 		relationshipIdentifier += identifier.map((key) ->
-			return inflection.capitalize key
+			return inflection.capitalize(key)
 		).join('')
 	else
-		relationshipIdentifier += inflection.capitalize identifier
+		relationshipIdentifier += inflection.capitalize(identifier)
 
 	if plural
 		relationshipIdentifier += 's'
