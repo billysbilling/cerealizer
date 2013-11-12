@@ -10,8 +10,8 @@
   "license": "none",
   "dependencies": {
     "coffee-script": "~1.6.3",
-    "inflection": "~1.2.6",
-    "lodash": "~2.2.1"
+    "lodash": "~2.2.1",
+    "inflectors": "~1.0.1"
   },
   "devDependencies": {
     "mocha": "~1.10.0"

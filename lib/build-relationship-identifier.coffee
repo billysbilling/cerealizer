@@ -1,4 +1,4 @@
-inflection = require 'inflection'
+inflectors = require 'inflectors'
 
 # Build identifier for relationship from name of the collection and
 # identifier array or string. If identifier is an array, key are combined by
@@ -10,15 +10,15 @@ inflection = require 'inflection'
 # Returns String of relationship identifier
 module.exports = (collectionName, identifier, plural = false) ->
 	# Inflect model name from collection name
-	relationshipIdentifier = inflection.singularize(collectionName)
+	relationshipIdentifier = inflectors.singularize(collectionName)
 
 	# Generate pascalcased identifier
 	if Array.isArray(identifier)
 		relationshipIdentifier += identifier.map((key) ->
-			return inflection.capitalize(key)
+			return inflectors.capitalize(key)
 		).join('')
 	else
-		relationshipIdentifier += inflection.capitalize(identifier)
+		relationshipIdentifier += inflectors.capitalize(identifier)
 
 	if plural
 		relationshipIdentifier += 's'

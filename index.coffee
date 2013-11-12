@@ -1,5 +1,5 @@
-inflection = require 'inflection'
 _ = require 'lodash'
+inflectors = require 'inflectors'
 buildId = require './lib/build-id'
 buildReferenceIdentifier = require './lib/build-reference-identifier'
 buildRelationshipIdentifier = require './lib/build-relationship-identifier'
@@ -15,7 +15,7 @@ buildRelationshipIdentifier = require './lib/build-relationship-identifier'
 #   _collectionNames - The Array of collection names
 #
 # Returns object with nested arrays
-module.exports = (array, options) ->
+serializer = module.exports = (array, options) ->
 	# Set default options
 	options ?= {}
 	options.identifier ?= 'id'
@@ -28,6 +28,8 @@ module.exports = (array, options) ->
 	array = _convertToArrays(array)
 
 	return array
+
+serializer.inflectors = inflectors
 
 # Merges elements into collections (tables) containing record item objects
 # instead of arrays (rows) containing hashes (tables). Also removes duplicate
@@ -111,7 +113,7 @@ _buildRelationships = (elements, options) ->
 						collectionIdentifier = buildRelationshipIdentifier(collectionName, identifier, true)
 					else
 						# Otherwise just use pluralized version of item identifier
-						collectionIdentifier = inflection.pluralize(itemIdentifier)
+						collectionIdentifier = inflectors.pluralize(itemIdentifier)
 
 					# Check for reference to collection
 					if (refId = item[buildRelationshipIdentifier(refCollectionName, identifier)])?
