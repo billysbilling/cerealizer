@@ -15,10 +15,10 @@ module.exports = (collectionName, identifier, plural = false) ->
 	# Generate pascalcased identifier
 	if Array.isArray(identifier)
 		relationshipIdentifier += identifier.map((key) ->
-			return inflectors.capitalize(key)
+			return inflectors.classify(key)
 		).join('')
 	else
-		relationshipIdentifier += inflectors.capitalize(identifier)
+		relationshipIdentifier += inflectors.classify(identifier)
 
 	if plural
 		relationshipIdentifier += 's'
