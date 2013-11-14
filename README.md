@@ -1,4 +1,4 @@
-Cerealizer
+Cerealizer [![Build Status](https://travis-ci.org/billysbilling/cerealizer.png)](https://travis-ci.org/billysbilling/cerealizer)
 ================
 
 The purpose of this module is to serialize an array of objects (each containing one or more collection objects) into collection arrays of objects with references to relationships.
