@@ -1,7 +1,7 @@
 {
   "name": "cerealizer",
   "description": "Serializes data and creates relationships",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "homepage": "https://github.com/billysbilling/cerealizer",
   "scripts": {
     "test": "mocha --reporter spec --recursive --compilers coffee:coffee-script ./tests"
