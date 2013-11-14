@@ -37,7 +37,7 @@ console.log(cerealizer(data));
 
 ## Description
 
-The serializer runs through a series of operations, which are merging of elements, merging of namespaces, building of relationships, and converting to arrays.
+The Cerealizer runs through a series of operations, which are merging of elements, merging of namespaces, building of relationships, and converting to arrays.
 
 ### Merging of elements
 
