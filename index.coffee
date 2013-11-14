@@ -15,7 +15,7 @@ buildRelationshipIdentifier = require './lib/build-relationship-identifier'
 #   _collectionNames - The Array of collection names
 #
 # Returns object with nested arrays
-serializer = module.exports = (array, options) ->
+cerealizer = module.exports = (array, options) ->
 	# Set default options
 	options ?= {}
 	options.identifier ?= 'id'
@@ -29,7 +29,7 @@ serializer = module.exports = (array, options) ->
 
 	return array
 
-serializer.inflectors = inflectors
+cerealizer.inflectors = inflectors
 
 # Merges elements into collections (tables) containing record item objects
 # instead of arrays (rows) containing hashes (tables). Also removes duplicate

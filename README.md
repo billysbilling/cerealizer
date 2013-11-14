@@ -1,4 +1,4 @@
-Serializer
+Cerealizer
 ================
 
 The purpose of this module is to serialize an array of objects (each containing one or more collection objects) into collection arrays of objects with references to relationships.
@@ -6,7 +6,7 @@ The purpose of this module is to serialize an array of objects (each containing 
 ## Usage
 
 ```javascript
-var serializer = require('serializer');
+var cerealizer = require('cerealizer');
 var data = [
   {
     majors: { id: 1, name: 'Capital' },
@@ -21,7 +21,7 @@ var data = [
     minors: { id: 'b', height: 20 }
   }
 ];
-console.log(serializer(data));
+console.log(cerealizer(data));
 // Outputs
 // {
 //   majors: [
@@ -57,7 +57,7 @@ This operation runs through all collections and converts the object containing t
 
 ## API
 
-### serializer(array[, options])
+### cerealizer(array[, options])
 
 Serializes the array of objects into collection arrays of objects with references to relationships.
 
@@ -67,7 +67,7 @@ Serializes the array of objects into collection arrays of objects with reference
 
 **Example**
 ```javascript
-serializer([
+cerealizer([
   {
     majors: { id: 1 },
     minors: { id: 2 }
@@ -80,7 +80,7 @@ serializer([
 // }
 ```
 
-### serializer.inflectors
+### cerealizer.inflectors
 
 #### addRule(plural, singular)
 
@@ -91,9 +91,9 @@ Adds a rule to the Inflectors module that will override existing patterns. Rules
 
 **Example**
 ```javascript
-serializer.inflectors.addRule('foo', 'bar');
-serializer.inflectors.singularize('foo'); //-> bar
-serializer.inflectors.pluralize('bar'); //-> foo
+cerealizer.inflectors.addRule('foo', 'bar');
+cerealizer.inflectors.singularize('foo'); //-> bar
+cerealizer.inflectors.pluralize('bar'); //-> foo
 ```
 
 #### removeRule(plural)
@@ -104,10 +104,10 @@ Removes a rule from the Inflectors module.
 
 **Example**
 ```javascript
-serializer.inflectors.addRule('foo', 'bar');
-serializer.inflectors.singularize('foo'); //-> bar
-serializer.inflectors.removeRule('foo');
-serializer.inflectors.pluralize('bar'); //-> bars
+cerealizer.inflectors.addRule('foo', 'bar');
+cerealizer.inflectors.singularize('foo'); //-> bar
+cerealizer.inflectors.removeRule('foo');
+cerealizer.inflectors.pluralize('bar'); //-> bars
 ```
 
 ================

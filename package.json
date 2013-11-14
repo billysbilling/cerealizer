@@ -1,19 +1,26 @@
 {
-  "name": "serializer",
+  "name": "cerealizer",
+  "description": "Serializes data and creates relationships",
   "version": "0.1.2",
-  "description": "Serialize data",
-  "main": "index.js",
+  "homepage": "https://github.com/billysbilling/cerealizer",
   "scripts": {
     "test": "mocha --reporter spec --recursive --compilers coffee:coffee-script ./tests"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/billysbilling/cerealizer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/billysbilling/cerealizer/issues"
+  },
   "author": "Michael Storgaard",
-  "license": "none",
+  "license": "MIT",
   "dependencies": {
     "coffee-script": "~1.6.3",
     "lodash": "~2.2.1",
     "inflectors": "~1.0.1"
   },
   "devDependencies": {
-    "mocha": "~1.10.0"
+    "mocha": "~1.14.0"
   }
 }
